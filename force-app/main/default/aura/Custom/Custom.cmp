@@ -1,0 +1,937 @@
+<aura:component controller="customclass" implements="force:hasRecordId,lightning:actionOverride,lightning:hasPageReference" access="global">
+    <aura:html tag="style">
+        cCustom .pillSize {
+        width: 100% !important;
+        height: 36px !important;
+        }
+    </aura:html>
+    <!--declare attributes--> 
+    <aura:attribute name="selectedRecord" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="listOfSearchRecords" type="List" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    <aura:attribute name="SearchKeyWord1" type="string"/>
+    <aura:attribute name="selectedRecord1" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="listOfSearchRecords1" type="List" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="SearchKeyWord3" type="string"/>
+    <aura:attribute name="selectedRecord3" type="sObject" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="listOfSearchRecords3" type="List"/> 
+    <aura:attribute name="objectAPIName" type="string" default=""/>
+    <aura:attribute name="IconName" type="string" default=""/>
+    <aura:attribute name="label" type="string" default=""/>
+    <aura:attribute name="Message" type="String" default=""/>
+    <aura:attribute name="DaysValues" type="Object[]" />
+    <aura:attribute name="Picklistvalues" type="List" default="asc"/>
+    <aura:attribute name="sarttime" type="time" />
+    <aura:attribute name="endtime" type="time" />
+    <aura:attribute name="data" type="List" />
+    
+    <aura:attribute name="isModalOpen" type="boolean" default="true"/>
+    <aura:attribute name="monday" type="boolean" default="false"/>
+    <aura:attribute name="tuesday" type="boolean" default="false"/>
+    <aura:attribute name="wednesday" type="boolean" default="false"/>
+    <aura:attribute name="thursday" type="boolean" default="false"/>
+    <aura:attribute name="friday" type="boolean" default="false"/>
+    <aura:attribute name="saturday" type="boolean" default="false"/>
+    <aura:attribute name="sunday" type="boolean" default="false"/>
+    <aura:attribute name="fielddisabled" type="boolean" default="true"/>
+    <aura:attribute name="TotalNumberOfRecord" type="integer" description="use for display Number of records"/>
+    <aura:attribute name="TotalNumberOfRecord1" type="integer" description="use for display Number of records"/>
+    
+    <aura:attribute name="selectedRecordId" type="Id" />
+    <aura:attribute name="firstname" type="String" />
+    <aura:attribute name="Mondaystarttime" type="Time" />
+    <aura:attribute name="Tuesdaystarttime" type="Time" />
+    <aura:attribute name="Wednesdaystarttime" type="Time" />
+    <aura:attribute name="Thursdaystarttime" type="Time" />
+    <aura:attribute name="Fridaystarttime" type="Time" />
+    <aura:attribute name="Saturdaystarttime" type="Time" />
+    <aura:attribute name="Mondayendtime" type="Time" />
+    <aura:attribute name="Tuesdayendtime" type="Time" />
+    <aura:attribute name="Wednesdayendtime" type="Time" />
+    <aura:attribute name="Thursdayendtime" type="Time" />
+    <aura:attribute name="Fridayendtime" type="Time" />
+    <aura:attribute name="Saturdayendtime" type="Time" />
+    <aura:attribute name="Sundaystarttime" type="Time" />
+    <aura:attribute name="Sundayendtime" type="Time" />
+    <aura:attribute name="classtype" type="String" />
+    <aura:attribute name="classtype2" type="String" />
+    <aura:attribute name="isModalOpen1" type="boolean" default="false"/>
+    <aura:attribute name="isModalOpen2" type="boolean" default="false"/>
+    <aura:attribute name="checkboxss" type="boolean"/>
+        <aura:attribute name="basedonfirstnameopenpopup" type="boolean" default="false"/>
+    <aura:attribute name="Message2" type="String" default="Search Course Name"/>
+
+    <aura:attribute name="startendtime" type="boolean" default="false"/>
+    <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>-->
+    <aura:attribute name="detailpagerecordid" type="String" />
+     <aura:attribute name="Mondaytimingsforall" type="String" />
+    
+    <!--declare events hendlers-->  
+    <aura:handler name="oSelectedRecordEvent" event="c:selectedsObjectRecordEvent1" action="{!c.handleComponentEvent}"/>
+    <aura:handler name="oSelectedRecordEvent1" event="c:selectedsObjectRecordEvent2" action="{!c.handleComponentEvent1}"/>
+    <aura:handler name="oSelectedRecordEvent3" event="c:selectedsObjectRecordEvent3" action="{!c.handleComponentEvent3}"/>
+    
+    <aura:if isTrue="{!v.isModalOpen}">
+        
+        
+        <lightning:recordEditForm  objectApiName="SFDC_Class__c"  onsubmit="{!c.handleSubmit}" aura:id="editRRForm"
+                                  recordId="{!v.detailpagerecordid}" recordTypeId="{!v.selectedRecordId}"
+                                  onsuccess="{!c.handleSuccess}">
+            <lightning:messages />
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium" >
+                
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Class Creation</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here--><div class="slds-scrollable_y" style="width:24">
+                    
+                    <div class="slds-modal__content slds-p-around_medium " id="modal-content-id-1" >
+                        
+                        
+                        
+                        <p>
+                            
+                            <!-- https://www.lightningdesignsystem.com/components/lookups/ --> 
+                            <aura:if isTrue="{!v.selectedRecordId=='0120v000000oxOxAAI'}" >
+                                
+                                <div class="slds-scrollable_y" style="width:24">
+                                    <div class="slds-section slds-is-open">
+                                        <h3 class="slds-section__title slds-theme_shade">
+                                            <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Information Section</span>
+                                        </h3></div>
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col">
+                                            <span>
+                                                <div class="slds-form slds-form_stacked">
+                                                    <lightning:inputField fieldName="Class_ID__c"/>
+                                                    <lightning:inputField fieldName="Name" required="true"/>
+                                                    <lightning:inputField fieldName="RecordTypeId" value="{!v.selectedRecordId}" disabled="{!v.fielddisabled}"/>
+                                                    <lightning:inputField fieldName="Class_Category__c"/>
+                                                    
+                                                    <lightning:inputField fieldName="Class_Course__c" value="{!v.selectedRecord3.Id}" class="slds-hide"/>
+                                                <!-- <lightning:inputField fieldName="Class_Course__c"/>-->
+
+                                                    
+                                                    
+                                                    <div onmouseleave="{!c.onblur3}" aura:id="searchRes3" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+                                                        <label class="slds-form-element__label" for="lookup-348">Class Course</label>
+                                                        <div class="slds-form-element__control">
+                                                            
+                                                           <div class="slds-input-has-icon slds-input-has-icon--right class-course">
+                                                                <div aura:id="lookup-pill3" class="slds-pill-container slds-hide">
+                                                                    <lightning:pill class="pillSize" label="{!v.selectedRecord3.Course_Name__c}" name="{!v.selectedRecord3.Course_Name__c}" onremove="{! c.clear3 }">
+                                                                        <aura:set attribute="media">
+                                                                            <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                                                                        </aura:set>
+                                                                    </lightning:pill>
+                                                                </div>
+                                                                <div aura:id="lookupField3" class="slds-show">
+                                                                    <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="Search CCA Courses.."/>
+                                                                    <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                                        <span class="slds-assistive-text"></span>
+                                                                    </span>
+                                                                    <ui:inputText click="{!c.onfocus3}" updateOn="keyup" keyup="{!c.keyPressController3}" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.SearchKeyWord3}" placeholder="search.."/>
+                                                                </div>   
+                                                            </div>
+                                                        </div>
+                                                        <ul style="min-height:40px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                                             <div onclick="{!c.opensearchpopup}">
+                        <lightning:buttonIcon iconName="utility:search" alternativeText="Search" variant="bare" class="slds-input__icon" />{!v.SearchKeyWord3} in Course
+                        </div>
+                                                            <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                            <center> {!v.Message}</center>
+                                                            <aura:iteration items="{!v.listOfSearchRecords3}" var="singleRec">
+                                                                <c:ClassCoursecustomLookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                                            </aura:iteration>
+                                                        </ul>
+                                                    </div>
+                                                    <lightning:inputField fieldName="Course_Name__c" />
+                                                    
+                                                    
+                                                    <lightning:inputField fieldName="Language__c" />
+                                                    <lightning:inputField fieldName="Is_it_a_CNA_Other_class__c" required="true"/>
+                                                    <lightning:inputField fieldName="Class_Mode__c"/>
+                                                    <lightning:inputField fieldName="Facility__c"/>
+                                                    <lightning:inputField fieldName="Zoom_Meeting_Link__c"/>
+                                                    <lightning:inputField fieldName="Max_Capacity__c"/>
+                                                    
+                                                    
+                                                    <lightning:inputField fieldName="Allowed_absences__c"/>
+                                                    
+                                                    
+                                                    
+                                                    <lightning:inputField fieldName="Instructor_ID__c" value="{!v.selectedRecord.Id}" class="slds-hide"/>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                </div>
+                                            </span>
+                                        </div> <div class="slds-col">
+                                        <span>
+                                            <div class="slds-form slds-form_stacked">
+                                                <lightning:inputField fieldName="Class_Status__c"/>
+                                                <lightning:inputField fieldName="Start_Date__c" required="true" aura:id="stada" value="{!v.DaysValues.Start_Date__c}"/>
+                                                <lightning:inputField fieldName="End_Date__c" required="true" aura:id="endda" value="{!v.DaysValues.End_Date__c}"/>
+                                                
+                                                <lightning:inputField fieldName="Class_Schedule__c"/>
+                                                <lightning:inputField fieldName="Class_Days__c" value="{!v.DaysValues.Class_Days__c}" aura:id="pickval" onchange="{!c.getpicklistvalues}"/>
+                                                <lightning:inputField fieldName="Same_time_for_all_days__c" aura:id="same"  onchange="{!c.getcheckboxstatus}"/>
+
+                                                <aura:if isTrue="{!v.startendtime}" >
+                                                       <lightning:inputField fieldName="Class_Timings__c" value="{!v.DaysValues.Class_Timings__c}" aura:id="classtime" />
+
+                                                    
+                                                </aura:if>
+                                                <lightning:inputField fieldName="EdFund_Facility__c"/>
+                                                <lightning:inputField fieldName="EdFund_Vendor__c"/>
+                                                <lightning:inputField fieldName="Coordinator__c"/>
+                                                <lightning:inputField fieldName="Regional_Manager_or_Coordinator_2__c"/>
+                                                
+                                             
+                                                
+                                                
+                                                
+                                                
+                                                
+                                            </div></span></div></div>
+                                    
+                                    <aura:if  isTrue="{!and(or(v.monday, v.tuesday, v.wednesday,  v.thursday,  v.friday, v.saturday, v.sunday),  v.startendtime == false)}" >
+                                        
+                                        <div class="slds-section slds-is-open">
+                                            <h3 class="slds-section__title slds-theme_shade">
+                                                <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Start Time and End Time </span>
+                                            </h3></div></aura:if>
+                                    
+                                    <aura:if  isTrue="{!and(and(v.monday == false, v.tuesday == false, v.wednesday == false,  v.thursday == false,  v.friday == false, v.saturday == true, v.sunday == true),  v.startendtime == false)}" >
+                                        
+                                        <div class="slds-section slds-is-open">
+                                            <h3 class="slds-section__title slds-theme_shade">
+                                                <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Start Time and End Time </span>
+                                            </h3></div></aura:if>
+                                    
+                                    <div class="slds-grid slds-Wrap">
+                                        
+                                        
+                                        <div class ="slds-size_1-of-2">
+                                            <span>
+                                                <aura:if isTrue="{!and(v.monday , v.startendtime == false)}">
+                                                    
+                                                    
+                                                    <lightning:inputField fieldName="Monday_Timings_For_Testing__c" value="{!v.DaysValues.Monday_Timings_For_Testing__c}" aura:id ="mondaytime"/>
+                                                </aura:if>
+                                                <aura:if isTrue="{!and(v.wednesday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Wednesday_Timings__c" value="{!v.DaysValues.Wednesday_Timings__c}" aura:id ="wednesdaytime"/>
+                                                </aura:if>
+                                                <aura:if isTrue="{!and(v.friday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Friday_Timings__c" value="{!v.DaysValues.Friday_Timings__c}" aura:id ="fridaytime"/>
+                                                </aura:if>
+                                     
+                                                    <aura:if isTrue="{!and(v.saturday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Saturday_Timings__c" value="{!v.DaysValues.Saturday_Timings__c}" aura:id ="saturrdaytime" />
+                                                </aura:if>
+                                               
+                                            </span></div>
+                                        <div class ="slds-size_1-of-2">
+                                            <span>
+                                                <aura:if isTrue="{!and(v.tuesday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Tuesday_Timings__c" value="{!v.DaysValues.Tuesday_Timings__c}" aura:id ="tuesdaytime" /></aura:if>
+                                                <aura:if isTrue="{!and(v.thursday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Thursday_Timings__c" value="{!v.DaysValues.Thursday_Timings__c}" aura:id ="thursdaytime"/>
+                                                </aura:if>
+                                                          <aura:if isTrue="{!and(v.sunday,v.startendtime == false)}">
+                                                    <lightning:inputField fieldName="Sunday_timings__c" value="{!v.DaysValues.Sunday_timings__c}" aura:id ="sundaytime"/>
+                                                </aura:if>
+                                               
+                      
+                                            </span></div></div>
+
+                                    <div class="slds-section slds-is-open">
+                                        <h3 class="slds-section__title slds-theme_shade">
+                                            <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Instructor Assignment </span>
+                                        </h3></div>
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col">
+                                            <span>
+                                                <div class="slds-form slds-form_stacked">
+                                                    <lightning:inputField fieldName="Instructor_ID__c" value="{!v.selectedRecord.Id}" class="slds-hide"/>
+                                                    <lightning:inputField fieldName="Instructor_ID_2__c" value="{!v.selectedRecord1.Id}" class="slds-hide"/>
+                                                    
+                                                    <!--
+                                                    
+                                                   <div class="slds-combobox_container slds-p-top_xx-small">
+                                                        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aura:id="resultsDiv" aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                                                            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                                                
+                                                                <div aura:id="lookupField">
+                                                                   
+                                                                    <lightning:input aura:id="inputLookup" type="search" label="{!v.label}" onload="gest" class="inputBox lookUp"  onchange="{!c.keyPressController}" value="{!v.SearchKeyWord}" autoComplete="off" variant="label-hidden" placeholder="{!v.placeHolder}"/>
+                                                                    <lightning:spinner class="slds-hide" aura:id="Spinner" alternativeText="Loading" size="small" variant="brand"/>
+                                                                </div>
+                                                            </div>
+                                                          
+                                                            <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid" style="{! 'max-height:' + (8 + (v.recordCount * 40)) + 'px' }">
+                                                                <ul class="slds-listbox slds-listbox_vertical recordListBox" role="presentation">
+                                                                    
+                                                                       
+                                                                        <aura:iteration items="{!v.listOfSearchRecords}" var="rec" >
+                                                                            <li id="{!rec.Id}" class="slds-listbox__item eachItem user" onclick="{!c.selectItem}">
+                                                                                <div class="slds-media slds-listbox__option_entity">
+                                                                                    <lightning:icon iconName="{!v.iconName}" size="small" alternativeText="icon"/>
+                                                                                    <span class="verticalAlign slds-truncate">{!rec.Name}</span>
+                                                                                </div>
+                                                                            </li>
+                                                                        </aura:iteration>
+                                                                        
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>-->
+                                                    
+                                                    <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single" >
+                                                        <div class ="slds-size_1-of-1">
+                                                            <label class="slds-form-element__label" for="lookup-348">{!v.label}</label>
+                                                            <div class="slds-form-element__control">
+                                                                
+                                                                <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                    
+                                                                    <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                                                                        <lightning:pill class="pillSize" label="{!v.selectedRecord.Name}" name="{!v.selectedRecord.Name}" onremove="{! c.clear }">
+                                                                            <aura:set attribute="media">
+                                                                                <lightning:icon iconName="{!v.IconName}" size="medium" alternativeText="{!v.IconName}"/>
+                                                                            </aura:set>
+                                                                        </lightning:pill>
+                                                                    </div>
+                                                                    <div aura:id="lookupField" class="slds-show ">
+                                                                        
+                                                                        <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search" />
+                                                                        <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                                            <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                                            <span class="slds-assistive-text"></span>
+                                                                            
+                                                                        </span>
+                                                                        
+                                                                        <ui:inputText click="{!c.onfocus}" updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass " value="{!v.SearchKeyWord}" placeholder="search..." />
+                                                                        
+                                                                    </div>   
+                                                                </div>
+                                                                <ul style="max-height:90px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds slds-scrollable_y" >
+                                                                    
+                                                                    <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                                    <center> {!v.Message}</center>
+                                                                    <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                                                                        <c:CustomLookup1 oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                                                        
+                                                                        
+                                                                    </aura:iteration>
+                                                                </ul>
+                                                            </div>
+                                                            <!--   <div class="slds-scrollable_y" style="height:10rem;width:24rem">-->
+                                                            <ul style="max-height:90px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds slds-scrollable_y" >
+                                                                
+                                                                <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                                <center> {!v.Message}</center>
+                                                                <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                                                                    <c:CustomLookup1 oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                                                    
+                                                                    
+                                                                </aura:iteration>
+                                                            </ul>
+                                                        </div></div>
+                                                    <lightning:inputField fieldName="Instructor_1__c"/>
+                                                    <lightning:inputField fieldName="Class_type__c" value="{!v.selectedRecord.Type_of_Instructor__c}" disabled="{!v.fielddisabled}"/>
+                                                    <lightning:inputField fieldName="Classes_assigned_to_Instructor_1__c" value="{!v.TotalNumberOfRecord}" disabled="{!v.fielddisabled}"/>
+                                                    
+                                                </div></span></div>
+                                        <div class="slds-col">
+                                            <span>
+                                                <div class="slds-form slds-form_stacked">
+                                                    
+                                                    <div onmouseleave="{!c.onblur1}" aura:id="searchRes1" class="slds-form-element slds-lookup slds-is-close " data-select="single">
+                                                        <div class ="slds-size_1-of-1 ">
+                                                            <span> <label class="slds-form-element__label" for="lookup-348">Instructor ID 2</label>
+                                                                
+                                                                <div class="slds-form-element__control">
+                                                                    
+                                                                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                        <div aura:id="lookup-pill1" class="slds-pill-container slds-hide">
+                                                                            <lightning:pill class="pillSize" label="{!v.selectedRecord1.Name}" name="{!v.selectedRecord1.Name}" onremove="{! c.clear1 }">
+                                                                                <aura:set attribute="media">
+                                                                                    <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                                                                                </aura:set>
+                                                                            </lightning:pill>
+                                                                        </div>
+                                                                        <div aura:id="lookupField1" class="slds-show ">
+                                                                            <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search"/>
+                                                                            <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                                                <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                                                <span class="slds-assistive-text"></span>
+                                                                            </span>
+                                                                            <ui:inputText click="{!c.onfocus1}" updateOn="keyup" keyup="{!c.keyPressController1}" class="slds-lookup__search-input slds-input leftPaddingClass " value="{!v.SearchKeyWord1}" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;search..."/>
+                                                                            
+                                                                        </div>   
+                                                                    </div>
+                                                                </div>
+                                                                <!-- <div class="slds-scrollable_y" style="height:10rem;width:24rem">-->
+                                                                
+                                                                <ul style="max-height:90px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds slds-scrollable_y"  >
+                                                                    <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                                    <center> {!v.Message}</center>
+                                                                    <aura:iteration items="{!v.listOfSearchRecords1}" var="singleRec">
+                                                                        
+                                                                        
+                                                                        <c:selectedsRecords oRecord="{!singleRec}" IconName="{!v.IconName}" selsectedid="{!v.selectedRecord.Name}"/>                                                               
+                                                                    </aura:iteration>
+                                                                </ul>
+                                                            </span></div></div>
+                                                    <lightning:inputField fieldName="Instructor_2__c"/>
+                                                    
+                                                    <lightning:inputField fieldName="Instructor_Id_2_Type__c" value="{!v.selectedRecord1.Type_of_Instructor__c}" disabled="{!v.fielddisabled}"/>
+                                                    
+                                                    <lightning:inputField fieldName="Classes_assigned_to_Instructor_2__c" value="{!v.TotalNumberOfRecord1}" disabled="{!v.fielddisabled}"/>
+                                                </div></span></div></div> </div>
+                                
+                                                             <div class="slds-section slds-is-open">
+                                        <h3 class="slds-section__title slds-theme_shade">
+                                            <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Education Fund Information</span>
+                                        </h3></div>
+                                <div class="slds-grid slds-gutters">
+                                        <div class="slds-col">
+                                            <span>
+                                <lightning:inputField fieldName="Training_Fund_CEU_Course_Topic__c"/>
+                                                <lightning:inputField fieldName="Show_Release_Form__c"/>
+                                                <lightning:inputField fieldName="Ready_for_Final_Audit__c"/>
+                                                <lightning:inputField fieldName="Invoice_Processed_Staff__c"/>
+                                            </span></div>
+                                    <div class="slds-col">
+                                            <span>
+    <lightning:inputField fieldName="Show_Participation_Agreement__c"/>
+                                                <lightning:inputField fieldName="Reimbursement_Class__c"/>
+                                                <lightning:inputField fieldName="Invoice_Processed__c"/>
+                                                <lightning:inputField fieldName="Invoice_Processed_Date__c"/>
+                                        </span></div></div>
+                                <aura:set attribute="else">
+                                    <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Information Section</span>
+                                    
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col">
+                                            <span>
+                                                <div class="slds-form slds-form_stacked">
+                                                    <lightning:inputField fieldName="Class_ID__c"/>
+                                                    <lightning:inputField fieldName="Name" required="true"/>
+                                                    <lightning:inputField fieldName="RecordTypeId" value="{!v.selectedRecordId}" disabled="{!v.fielddisabled}"/>
+
+                                                    <lightning:inputField fieldName="Class_Course__c" value="{!v.selectedRecord3.Id}" class="slds-hide"/>
+                                                    <lightning:inputField fieldName="Class_Category__c"/>
+                                                    <div onmouseleave="{!c.onblur3}" aura:id="searchRes3" class="slds-form-element slds-lookup slds-is-close" data-select="single">
+                                                        <label class="slds-form-element__label" for="lookup-348">Class Course</label>
+                                                        <div class="slds-form-element__control">
+                                                            
+                                                           <div class="slds-input-has-icon slds-input-has-icon--right class-course">
+                                                                <div aura:id="lookup-pill3" class="slds-pill-container slds-hide">
+                                                                    <lightning:pill class="pillSize" label="{!v.selectedRecord3.Course_Name__c}" name="{!v.selectedRecord3.Course_Name__c}" onremove="{! c.clear3 }">
+                                                                        <aura:set attribute="media">
+                                                                            <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                                                                        </aura:set>
+                                                                    </lightning:pill>
+                                                                </div>
+                                                                <div aura:id="lookupField3" class="slds-show">
+                                                                    <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="Search CCA Courses.."/>
+                                                                    <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                                        <span class="slds-assistive-text"></span>
+                                                                    </span>
+                                                                    <ui:inputText click="{!c.onfocus3}" updateOn="keyup" keyup="{!c.keyPressController3}" class="slds-lookup__search-input slds-input leftPaddingClass" value="{!v.SearchKeyWord3}" placeholder="search.."/>
+                                                                </div>   
+                                                            </div>
+                                                        </div>
+                                                        <ul style="min-height:40px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds" role="listbox">
+                                                                                       <div onclick="{!c.opensearchpopup}">
+                        <lightning:buttonIcon iconName="utility:search" alternativeText="Search" variant="bare" class="slds-input__icon" />{!v.SearchKeyWord3} in Course
+                        </div>
+                                                            <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                            <center> {!v.Message}</center>
+                                                            <aura:iteration items="{!v.listOfSearchRecords3}" var="singleRec">
+                                                                <c:ClassCoursecustomLookupResult oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                                            </aura:iteration>
+                                                        </ul>
+                                                    </div>   
+
+                                                    <lightning:inputField fieldName="Course_Name__c" />
+
+                                                    <lightning:inputField fieldName="Language__c" />
+                                                    <lightning:inputField fieldName="Is_it_a_CNA_Other_class__c" required="true"/>
+                                                    <lightning:inputField fieldName="Class_Mode__c"/>
+                                                    <lightning:inputField fieldName="Facility__c"/>
+                                                    <lightning:inputField fieldName="Zoom_Meeting_Link__c"/>
+                                                    <lightning:inputField fieldName="Max_Capacity__c"/>
+                                                    
+                                                    
+                                                    <lightning:inputField fieldName="Allowed_absences__c"/>
+                                                    
+                                                    
+                                                    <lightning:inputField fieldName="Instructor_ID__c" value="{!v.selectedRecord.Id}" class="slds-hide"/>
+                                                    
+                                                    
+                                                </div></span></div>  <div class="slds-col" >
+                                        <span>
+                                            <div class="slds-form slds-form_stacked" style="font-weight:normal;">
+                                                <lightning:inputField fieldName="Class_Status__c"/>
+                                                <lightning:inputField fieldName="Start_Date__c" required="true" aura:id="stada" value="{!v.DaysValues.Start_Date__c}"/>
+                                                <lightning:inputField fieldName="End_Date__c" required="true" aura:id="enada" value="{!v.DaysValues.End_Date__c}"/>
+                                                
+                                                <lightning:inputField fieldName="Class_Schedule__c"/>
+                                                <lightning:inputField fieldName="Class_Days__c" value="{!v.DaysValues.Class_Days__c}" aura:id="pickval" onchange="{!c.getpicklistvalues}"/>
+                                                <lightning:inputField fieldName="Same_time_for_all_days__c" aura:id="same"  onchange="{!c.getcheckboxstatus}"/>
+                                                <aura:if isTrue="{!v.startendtime}" >
+                                                    
+                                                       <lightning:inputField fieldName="Class_Timings__c" value="{!v.DaysValues.Class_Timings__c}" aura:id="classtime" />
+                                                </aura:if>
+                                                <lightning:inputField fieldName="EdFund_Facility__c"/>
+                                                <lightning:inputField fieldName="EdFund_Vendor__c"/>
+                                                <lightning:inputField fieldName="Coordinator__c"/>
+                                                <lightning:inputField fieldName="Regional_Manager_or_Coordinator_2__c"/>
+                                                
+                                               
+                                                
+                                                
+                                                
+                                                
+                                                <!-- <lightning:inputField fieldName="Facility__c"/>-->
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                            </div></span></div></div>
+                                    <aura:if  isTrue="{!and(or(v.monday, v.tuesday, v.wednesday, v.thursday, v.friday, v.saturday), v.startendtime == false)}" >
+                                        
+                                        <div class="slds-section slds-is-open">
+                                            <h3 class="slds-section__title slds-theme_shade">
+                                                <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Start Time and End Time </span>
+                                            </h3></div></aura:if>
+                                    <aura:if  isTrue="{!and(and(v.monday == false, v.tuesday == false, v.wednesday == false,  v.thursday == false,  v.friday == false, v.saturday == false, v.sunday == true),  v.startendtime == false)}" >
+                                        
+                                        <div class="slds-section slds-is-open">
+                                            <h3 class="slds-section__title slds-theme_shade">
+                                                <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Start Time and End Time </span>
+                                            </h3></div></aura:if>
+                                    <div class="slds-grid slds-Wrap">
+                                        
+                                        
+                                        <div class ="slds-size_1-of-2">
+                                            <span>
+                                                 <aura:if isTrue="{!and(v.monday , v.startendtime == false)}">
+                                                    
+                                                    
+                                                    <lightning:inputField fieldName="Monday_Timings_For_Testing__c" value="{!v.DaysValues.Monday_Timings_For_Testing__c}" aura:id ="mondaytime"/>
+                                                </aura:if>
+                                                <aura:if isTrue="{!and(v.wednesday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Wednesday_Timings__c" value="{!v.DaysValues.Wednesday_Timings__c}" aura:id ="wednesdaytime"/>
+                                                </aura:if>
+                                                <aura:if isTrue="{!and(v.friday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Friday_Timings__c" value="{!v.DaysValues.Friday_Timings__c}" aura:id ="fridaytime"/>
+                                                </aura:if>
+                                     
+                                                    <aura:if isTrue="{!and(v.saturday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Saturday_Timings__c" value="{!v.DaysValues.Saturday_Timings__c}" aura:id ="saturrdaytime" />
+                                                </aura:if>
+                                            </span></div>
+                                        <div class ="slds-size_1-of-2">
+                                            <span>
+                                                           <aura:if isTrue="{!and(v.tuesday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Tuesday_Timings__c" value="{!v.DaysValues.Tuesday_Timings__c}" aura:id ="tuesdaytime" /></aura:if>
+                                                <aura:if isTrue="{!and(v.thursday,v.startendtime == false)}">
+                                                    
+                                                    <lightning:inputField fieldName="Thursday_Timings__c" value="{!v.DaysValues.Thursday_Timings__c}" aura:id ="thursdaytime"/>
+                                                </aura:if>
+                                                          <aura:if isTrue="{!and(v.sunday,v.startendtime == false)}">
+                                                    <lightning:inputField fieldName="Sunday_timings__c" value="{!v.DaysValues.Sunday_timings__c}" aura:id ="sundaytime"/>
+                                                </aura:if>
+                                               
+                                            </span></div></div>
+                                    
+                                    
+                                    
+ 
+                                    <div class="slds-section slds-is-open">
+                                        <h3 class="slds-section__title slds-theme_shade">
+                                            <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Instructor Assignment </span>
+                                        </h3></div>
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col">
+                                            <span>
+                                                <div class="slds-form slds-form_stacked">
+                                                    <lightning:inputField fieldName="Instructor_ID__c" value="{!v.selectedRecord.Id}" class="slds-hide"/>
+                                                    <lightning:inputField fieldName="Instructor_ID_2__c" value="{!v.selectedRecord1.Id}" class="slds-hide"/>
+                                                    <div onmouseleave="{!c.onblur}" aura:id="searchRes" class="slds-form-element slds-lookup slds-is-close" data-select="single" >
+                                                        <div class ="slds-size_1-of-1">
+                                                            <span> <label class="slds-form-element__label" for="lookup-348">{!v.label}</label>
+                                                                <div class="slds-form-element__control">
+                                                                    
+                                                                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                        
+                                                                        <div aura:id="lookup-pill" class="slds-pill-container slds-hide">
+                                                                            <lightning:pill class="pillSize" label="{!v.selectedRecord.Name}" name="{!v.selectedRecord.Name}" onremove="{! c.clear }">
+                                                                                <aura:set attribute="media">
+                                                                                    <lightning:icon iconName="{!v.IconName}" size="medium" alternativeText="{!v.IconName}"/>
+                                                                                </aura:set>
+                                                                            </lightning:pill>
+                                                                        </div>
+                                                                        <div aura:id="lookupField" class="slds-show ">
+                                                                            
+                                                                            <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search" />
+                                                                            <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                                                <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                                                <span class="slds-assistive-text"></span>
+                                                                                
+                                                                            </span>
+                                                                            
+                                                                            <ui:inputText click="{!c.onfocus}" updateOn="keyup" keyup="{!c.keyPressController}" class="slds-lookup__search-input slds-input leftPaddingClass " value="{!v.SearchKeyWord}" placeholder="search..." />
+                                                                            
+                                                                        </div>   
+                                                                    </div>
+                                                                </div>
+                                                                <!--   <div class="slds-scrollable_y" style="height:10rem;width:24rem">-->
+                                                                
+                                                                <ul style="max-height:90px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds slds-scrollable_y" >
+                                                                    <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                                    <center> {!v.Message}</center>
+                                                                    <aura:iteration items="{!v.listOfSearchRecords}" var="singleRec">
+                                                                        <c:CustomLookup1 oRecord="{!singleRec}" IconName="{!v.IconName}"/>
+                                                                    </aura:iteration>
+                                                                </ul>
+                                                            </span></div></div>
+                                                    <lightning:inputField fieldName="Instructor_1__c"/>
+                                                    
+                                                    <lightning:inputField fieldName="Class_type__c" value="{!v.selectedRecord.Type_of_Instructor__c}" disabled="{!v.fielddisabled}"/>
+                                                    <lightning:inputField fieldName="Classes_assigned_to_Instructor_1__c" value="{!v.TotalNumberOfRecord}" disabled="{!v.fielddisabled}"/>
+                                                    
+                                                </div></span></div>
+                                        <div class="slds-col">
+                                            <span>
+                                                <div class="slds-form slds-form_stacked">
+                                                    
+                                                    <div onmouseleave="{!c.onblur1}" aura:id="searchRes1" class="slds-form-element slds-lookup slds-is-close " data-select="single">
+                                                        <div class ="slds-size_1-of-1 ">
+                                                            <span> <label class="slds-form-element__label" for="lookup-348">Instructor ID 2</label>
+                                                                
+                                                                <div class="slds-form-element__control">
+                                                                    
+                                                                    <div class="slds-input-has-icon slds-input-has-icon--right">
+                                                                        <div aura:id="lookup-pill1" class="slds-pill-container slds-hide">
+                                                                            <lightning:pill class="pillSize" label="{!v.selectedRecord1.Name}" name="{!v.selectedRecord1.Name}" onremove="{! c.clear1 }">
+                                                                                <aura:set attribute="media">
+                                                                                    <lightning:icon iconName="{!v.IconName}" size="x-small" alternativeText="{!v.IconName}"/>
+                                                                                </aura:set>
+                                                                            </lightning:pill>
+                                                                        </div>
+                                                                        <div aura:id="lookupField1" class="slds-show ">
+                                                                            <lightning:icon class="slds-input__icon slds-show" iconName="utility:search" size="x-small" alternativeText="search"/>
+                                                                            <span class="slds-icon_container  slds-combobox__input-entity-icon" title="record">
+                                                                                <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="{!v.IconName}" size="x-small" alternativeText="icon"/>
+                                                                                <span class="slds-assistive-text"></span>
+                                                                            </span>
+                                                                            <ui:inputText click="{!c.onfocus1}" updateOn="keyup" keyup="{!c.keyPressController1}" class="slds-lookup__search-input slds-input leftPaddingClass " value="{!v.SearchKeyWord1}" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;search..."/>
+                                                                            
+                                                                        </div>   
+                                                                    </div>
+                                                                </div>
+                                                                <!-- <div class="slds-scrollable_y" style="height:10rem;width:24rem">-->
+                                                                
+                                                                <ul style="max-height:90px;margin-top:0px !important" class="slds-listbox slds-listbox_vertical slds-dropdown slds-dropdown_fluid slds-lookup__menu slds slds-scrollable_y"  >
+                                                                    <lightning:spinner class="slds-hide" variant="brand" size="small" aura:id="mySpinner"/>
+                                                                    <center> {!v.Message}</center>
+                                                                    <aura:iteration items="{!v.listOfSearchRecords1}" var="singleRec">
+                                                                        
+                                                                        
+                                                                        <c:selectedsRecords oRecord="{!singleRec}" IconName="{!v.IconName}" selsectedid="{!v.selectedRecord.Name}"/>                                                               
+                                                                    </aura:iteration>
+                                                                </ul>
+                                                            </span></div></div>
+                                                    <lightning:inputField fieldName="Instructor_2__c"/>
+                                                    
+                                                    <lightning:inputField fieldName="Instructor_Id_2_Type__c" value="{!v.selectedRecord1.Type_of_Instructor__c}" disabled="{!v.fielddisabled}"/>
+                                                    
+                                                    <lightning:inputField fieldName="Classes_assigned_to_Instructor_2__c" value="{!v.TotalNumberOfRecord1}" disabled="{!v.fielddisabled}"/>
+                                                </div></span></div></div>
+                                      <div class="slds-section slds-is-open">
+                                        <h3 class="slds-section__title slds-theme_shade">
+                                            <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Count Of Enrollments</span>
+                                        </h3></div>
+                                    <lightning:inputField fieldName="Students_Enrolled__c"/>
+                                     <div class="slds-section slds-is-open">
+                                        <h3 class="slds-section__title slds-theme_shade">
+                                            <span class="slds-truncate slds-p-horizontal_small" title="Section Title">Invoice Information</span>
+                                        </h3></div>
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col">
+                                            <span>
+                                                 <lightning:inputField fieldName="Ready_for_Final_Audit__c"/>
+                                                 <lightning:inputField fieldName="Invoice_Processed_Staff__c"/>
+                                            </span></div>
+                                         <div class="slds-col">
+                                            <span>
+                                                  <lightning:inputField fieldName="Invoice_Processed__c"/>
+
+                                                    <lightning:inputField fieldName="Invoice_Processed_Date__c"/>
+                                             </span></div></div>
+                                </aura:set>  </aura:if>
+                        </p>
+                        
+                        
+                    </div></div>
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral"
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModel }"/>
+                        <lightning:button variant="brand" type="submit" name="save" label="Save" />
+                        
+                        
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div> 
+            <lightning:navigation aura:id="navService"/>
+            
+        </lightning:recordEditForm>
+        
+        
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isModalOpen1 }">
+        
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container"  >
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="background-color:#9398F2;">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel1 }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Please Confirm</b></h2>
+                </header>
+                <!--###### MODAL BOX BODY Part Start######-->
+                <div class="slds-modal__content slds-p-around_small" id="modal-content-id-1" style="background-color:#f0f5f5;">
+                    <p>
+                        <b>Already this Instructor has been assigned to {!v.TotalNumberOfRecord} classes.Do you still want to assign this Instructor to the Class?
+                        </b>
+                    </p>
+                </div>
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.clear }"/>
+                    <lightning:button variant="brand" 
+                                      label="Agree"
+                                      title="Agree"
+                                      onclick="{! c.likenClose }"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <!--###### MODAL BOX Part END Here ######-->
+        
+    </aura:if>
+    <aura:if isTrue="{!v.isModalOpen2 }">
+        
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container"  >
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header" style="background-color:#9398F2;">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel1 }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"><b>Please Confirm</b></h2>
+                </header>
+                <!--###### MODAL BOX BODY Part Start######-->
+                <div class="slds-modal__content slds-p-around_small" id="modal-content-id-1" style="background-color:#f0f5f5;">
+                    <p>
+                        <b>Already this Instructor has been assigned to {!v.TotalNumberOfRecord1} classes.Do you still want to assign this Instructor to the Class?
+                        </b>
+                    </p>
+                </div>
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.clear1 }"/>
+                    <lightning:button variant="brand" 
+                                      label="Agree"
+                                      title="Agree"
+                                      onclick="{! c.likenClose }"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <!--###### MODAL BOX Part END Here ######-->
+        
+    </aura:if>
+    <aura:if isTrue="{!v.basedonfirstnameopenpopup}">
+        
+        <!-- Modal/Popup Box starts here-->
+        <div aura:id="thecontainer" class="thecontainer" id="thecontainer">
+        <div role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open slds-modal--large" >
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                                                 
+                <h2 id="header43" class="slds-text-heading--medium">Based on search related Courses</h2>
+<lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel7 }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+
+            </div>
+            <div class="slds-modal__content slds-p-top--x-large slds-p-around--medium" aura:id="modalbody" id="modalbody">
+
+        
+                <!-- Modal/Popup Box Header Starts here-->
+                                                <ul class="slds-lookup__list" role="listbox">
+
+                 <div class=" slds-size_1-of-2"  id="lookup-348" value="{!v.SearchKeyWord3}" >
+            
+<br></br>
+            <div class="slds-lookup__item--label--slds-text-body--small" >
+                <div class="slds-size_1-of-2" id="lookup-348" onclick="{!c.siva}">
+                                     <div class="slds-lookup__item--label-- slds-text-body--small--slds-size_1-of-3" >{!v.Message2}</div>
+                                    <ui:inputText  updateOn="keyup" keyup="{!c.keyPressController3}"  class="slds-lookup__search-input slds-input " value="{!v.SearchKeyWord3}" placeholder="search.." /><br></br><br></br>
+<br></br>
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                            
+                            <tr class="slds-text-title_caps">
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Account Name">Name</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Account Name">Course Name</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Phone">Course Category</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Fax">Is it a Recruitment Course</div>
+                                </th>
+                              <th scope="col">
+                                    <div class="slds-truncate" title="Fax">Is it a Training Fund Course</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Fax">Is it an Active Course</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Fax">Description</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Fax">Certificate Text</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Fax">Course Cost</div>
+                                </th>
+
+                                
+                            </tr>
+                            <tbody> 
+                        <aura:iteration items="{!v.listOfSearchRecords3}" var="singleRec" indexVar="count">
+                             
+                            <tr><td>
+
+                             <a onclick="{!c.firstnameclosepopup}"><c:ClassCoursecustomLookupResult oRecord="{!singleRec}"/></a>
+                                </td>
+                            <td>
+                                <div class="slds-truncate">{!singleRec.Course_Name__c}</div>
+                            </td>
+                                <td>
+                                <div class="slds-truncate">{!singleRec.Course_Category__c}</div>
+                            </td>
+                                <td>
+                                <div class="slds-truncate">{!singleRec.Is_it_a_Recruitment_Course__c}</div>
+                            </td>
+                                <td>
+                                <div class="slds-truncate">{!singleRec.Is_it_a_Training_Fund_Course__c}</div>
+                            </td>
+                                <td>
+                                <div class="slds-truncate">{!singleRec.Is_it_an_Active_Course__c}</div>
+                            </td>
+                                <td>
+                                <div class="slds-truncate">{!singleRec.Description__c}</div>
+                            </td>
+                                <td>
+                                <div class="slds-truncate">{!singleRec.Certificate_Text__c}</div>
+                            </td>
+                                <td>
+                                <div class="slds-truncate">{!singleRec.Course_Cost__c}</div>
+                            </td>
+                               
+                               
+                          </tr>
+                        </aura:iteration>
+                            </tbody>
+                        </table>
+                    <br></br>
+                        <!--<aura:if isTrue="{!v.accounrdata}">
+                            <div onclick="{!c.onSuccess1}">
+                            <lightning:buttonIcon iconName="utility:add" variant="bare"  alternativeText="Settings" /> New Account
+                                </div>
+                        </aura:if>-->
+                    </div></div>
+                      </div> </ul>
+        
+                
+                <!--Modal/Popup Box Body Starts here-->
+
+                    <!-- modal -->
+            <div class="slds-modal__footer">
+                    
+                       <!-- <lightning:button variant="brand"
+                                          label="save"
+                                          title="OK"
+                                          onclick="{!c.submitDetails7}"/>-->
+                        <lightning:button variant="neutral"
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModel7 }"/>
+                   
+                    
+                </div>
+              </div>
+              </div>
+       
+            </div>
+    	<div class="slds-backdrop slds-backdrop--open"></div>
+        </div>
+    </aura:if>
+</aura:component>

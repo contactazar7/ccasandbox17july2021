@@ -1,0 +1,110 @@
+<aura:component controller="Mark_Attendance_makeup" implements="force:appHostable,lightning:isUrlAddressable" access="global">
+    <aura:html tag="style">
+        .slds-template__container
+        {
+        <!--background-color: #FAFAF9;-->
+        background-color: #FFFFFF;
+        border-radius: 20px;
+        }
+    </aura:html>
+    <aura:attribute name="id" type="String" />
+    <aura:attribute name="classDate" type="string"/> 
+    <lightning:navigation aura:id="viewRosterService" />
+    <aura:attribute name="searchName" type="string" description="Search the provider name" />
+    <aura:attribute name="rowsToupdate" type="Object" />
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+    <aura:attribute name="Message" type="boolean" default="false" description="use for store and display attendance list return from server"/>
+    <aura:attribute name="TotalNumberOfRecord" type="integer" default="0" description="use for display Number of records"/>
+    <aura:attribute name="data" type="Object" />
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="isLoading" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.onPageReferenceChange}"/>
+    <aura:handler name="change" value="{!v.pageReference}" action="{!c.onPageReferenceChange}"/>
+    <aura:handler name="dataTableSaveEvent" event="c:dataTableSaveEvent" action="{!c.saveTableRecords}"/>    
+    <aura:handler name="dataTableSaveEvent" event="c:dataTableSaveEvent" action="{!c.handleRecordSelectEvent}"/>
+    <aura:attribute name="selectedRecords" type="List" />
+    <aura:attribute name="classId" type="string" />
+    <aura:attribute name="pageState" type="string" />
+    <aura:attribute name="cloneResult" type="Object" />
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <div class="slds-template__container">
+        <lightning:spinner variant="brand" size="large" aura:id="Id_spinner" class="slds-hide" />
+        <div class="slds-m-around_medium" style="font-family:verdana;courier">
+            <div>
+                <h1 style="text-align:center;font-stretch:expanded;font-family:Monospace;font-size:30px;">MAKEUP ATTENDANCE REGISTER</h1>
+            </div>
+        </div>
+        <div style="margin-left:25px;"> 
+            <lightning:layout >
+                <lightning:layoutItem size="4" padding="around-small" flexibility="auto">
+                    <P style="margin-left:15px;"><b>Count of Records : <lightning:badge label="{!v.TotalNumberOfRecord}"/></b><br/><br/>
+                        <b>Selected Records: <lightning:badge label="{!v.selectedRowsCount }"/></b>
+                    </P>
+                </lightning:layoutItem>
+                <lightning:layoutItem size="8" padding="around-large" flexibility="auto">     
+                    <p style="text-align:right;">
+                        <lightning:button onclick="{!c.handleSelect}" variant="brand-outline"
+                                          class="slds-button slds-button_brand-outline"
+                                          label="Mark as Present"
+                                          name="markaspresent"
+                                          aura:id="presentbtn"
+                                          disabled="{!v.selectedRowsCount == 0}"
+                                          />
+                        <lightning:button onclick="{!c.handleSelect}" variant="brand-outline"
+                                          class="slds-button slds-button_brand-outline"
+                                          label="Mark as Absent"
+                                          name="markasabsent"
+                                          aura:id="absentbtn"
+                                          disabled="{!v.selectedRowsCount == 0}"
+                                          />
+                        <lightning:button onclick="{!c.reset}" variant="destructive"
+                                          class="slds-button slds-button_brand"
+                                          label="Reset"
+                                          />
+                        <lightning:button onclick="{!c.viewRoster}" variant="brand"
+                                          class="slds-button slds-button_brand"
+                                          label="Back to Class View Roster"
+                                          />
+                    </p>
+                </lightning:layoutItem> 
+            </lightning:layout>
+            <lightning:layout>
+                <lightning:layoutItem size="4" padding="around-small" flexibility="auto">
+                    <p style="text-align:left;">
+                        <div style="margin-left:15px;" class="slds-form-element slds-size_1-of-1">
+                            <lightning:input value="{!v.searchName}"                                                     
+                                             placeholder="Search Provider Name..."
+                                             aura:id="name"
+                                             label="Provider Name"
+                                             onchange="{!c.Search}"/> 
+                        </div>       
+                    </p>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </div>
+        <aura:if isTrue="{! v.loaded }">
+            <div class="container" style="padding-top:50px;">
+                <div style="height:400px; overflow:auto !important;">
+                    <aura:if isTrue="{! v.loaded }">
+                        <lightning:datatable class="slds-table" data="{!v.data}" columns="{!v.columns}" 
+                                             keyField="Id" onrowselection="{! c.updateSelectedRecs }" showRowNumberColumn="false" 
+                                             defaultSortDirection="{!v.defaultSortDirection}" sortedDirection="{!v.sortDirection}" 
+                                             sortedBy="{!v.sortedBy}" onsort="{!c.handleSort}" />                       
+                        <aura:set attribute="else">
+                            <div aura:id="spinnerId" class="slds-spinner_container">
+                                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                                    <span class="slds-assistive-text">Loading...</span>
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </div>
+        </aura:if>
+        <aura:if isTrue="{!v.isLoading}">
+            <lightning:spinner alternativeText="Loading.." variant="brand"/>
+        </aura:if> 
+    </div>
+</aura:component>
